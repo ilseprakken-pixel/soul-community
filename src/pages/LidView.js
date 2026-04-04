@@ -339,7 +339,7 @@ export default function LidView() {
         overflow: 'hidden',
         flexShrink: 0,
       }}>
-        <img src="/hero.jpg" alt="Soul Community" style={{
+        <img src="/hero.png" alt="Soul Community" style={{
           width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 20%',
           display: 'block',
         }}/>
@@ -353,7 +353,7 @@ export default function LidView() {
           display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <img src={LOGO} alt="Soul Community" style={{ width: 56, height: 56, objectFit: 'contain', filter: 'invert(1)' }}/>
+            <img src={LOGO} alt="Soul Community" style={{ width: 56, height: 56, objectFit: 'contain', filter: 'invert(1)' }} onError={e => e.target.style.display='none'}/>
             <div>
               <div style={{ fontFamily: 'var(--font-display)', fontSize: 28, letterSpacing: '0.08em', color: '#fff', lineHeight: 1 }}>Soul Community</div>
               <div style={{ fontSize: 9, color: 'var(--goud)', letterSpacing: '0.2em', textTransform: 'uppercase', marginTop: 3 }}>Be the best you can be</div>
