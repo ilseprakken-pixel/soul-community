@@ -83,7 +83,7 @@ body {
 /* ── Header ──────────────────────────────────────────────────────────────── */
 
 .sc-header {
-  padding: 18px 20px 14px;
+  padding: 20px 20px 18px;
   border-bottom: 1px solid var(--wit08);
   display: flex;
   align-items: center;
@@ -98,17 +98,17 @@ body {
 .sc-logo { display: flex; align-items: center; gap: 10px; }
 
 .sc-logo-img {
-  width: 60px;
-  height: 60px;
+  width: 70px;
+  height: 70px;
   object-fit: contain;
   filter: brightness(0) invert(1);
 }
 
 .sc-logo-tekst { line-height: 1; }
-.sc-logo-naam { font-family: var(--font-display); font-size: 26px; letter-spacing: 0.08em; color: var(--wit); }
-.sc-logo-sub { font-size: 9px; color: var(--goud); letter-spacing: 0.2em; text-transform: uppercase; margin-top: 3px; }
+.sc-logo-naam { font-family: var(--font-display); font-size: 30px; letter-spacing: 0.08em; color: var(--wit); }
+.sc-logo-sub { font-size: 10px; color: var(--goud); letter-spacing: 0.2em; text-transform: uppercase; margin-top: 4px; }
 
-.sc-lid-pill { font-size: 13px; font-weight: 500; background: var(--paars-zacht); color: var(--paars-licht); padding: 6px 16px; border-radius: 20px; border: 1px solid var(--paars-rand); }
+.sc-lid-pill { font-size: 14px; font-weight: 500; background: var(--paars-zacht); color: var(--paars-licht); padding: 8px 18px; border-radius: 20px; border: 1px solid var(--paars-rand); }
 .sc-admin-badge { font-size: 11px; font-weight: 500; background: var(--goud-zacht); color: var(--goud); padding: 4px 12px; border-radius: 20px; border: 1px solid var(--goud-rand); }
 
 /* ── Greeting ─────────────────────────────────────────────────────────────── */
