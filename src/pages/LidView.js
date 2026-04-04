@@ -353,7 +353,7 @@ export default function LidView() {
           display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <img src={LOGO} alt="Soul Community" style={{ width: 56, height: 56, objectFit: 'contain', filter: 'brightness(0) invert(1)' }}/>
+            <img src={LOGO} alt="Soul Community" style={{ width: 56, height: 56, objectFit: 'contain', filter: 'invert(1)' }}/>
             <div>
               <div style={{ fontFamily: 'var(--font-display)', fontSize: 28, letterSpacing: '0.08em', color: '#fff', lineHeight: 1 }}>Soul Community</div>
               <div style={{ fontSize: 9, color: 'var(--goud)', letterSpacing: '0.2em', textTransform: 'uppercase', marginTop: 3 }}>Be the best you can be</div>
