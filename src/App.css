@@ -98,17 +98,17 @@ body {
 .sc-logo { display: flex; align-items: center; gap: 10px; }
 
 .sc-logo-img {
-  width: 40px;
-  height: 40px;
+  width: 60px;
+  height: 60px;
   object-fit: contain;
   filter: brightness(0) invert(1);
 }
 
 .sc-logo-tekst { line-height: 1; }
-.sc-logo-naam { font-family: var(--font-display); font-size: 19px; letter-spacing: 0.08em; color: var(--wit); }
-.sc-logo-sub { font-size: 8px; color: var(--goud); letter-spacing: 0.2em; text-transform: uppercase; margin-top: 2px; }
+.sc-logo-naam { font-family: var(--font-display); font-size: 26px; letter-spacing: 0.08em; color: var(--wit); }
+.sc-logo-sub { font-size: 9px; color: var(--goud); letter-spacing: 0.2em; text-transform: uppercase; margin-top: 3px; }
 
-.sc-lid-pill { font-size: 11px; font-weight: 500; background: var(--paars-zacht); color: var(--paars-licht); padding: 4px 12px; border-radius: 20px; border: 1px solid var(--paars-rand); }
+.sc-lid-pill { font-size: 13px; font-weight: 500; background: var(--paars-zacht); color: var(--paars-licht); padding: 6px 16px; border-radius: 20px; border: 1px solid var(--paars-rand); }
 .sc-admin-badge { font-size: 11px; font-weight: 500; background: var(--goud-zacht); color: var(--goud); padding: 4px 12px; border-radius: 20px; border: 1px solid var(--goud-rand); }
 
 /* ── Greeting ─────────────────────────────────────────────────────────────── */
@@ -121,13 +121,13 @@ body {
   font-family: var(--font-display);
   font-size: 30px;
   letter-spacing: 0.06em;
-  color: var(--paars-licht);
+  color: var(--blauw);
   padding: 22px 20px 10px;
-  border-top: 1px solid var(--paars-rand);
+  border-top: 1px solid rgba(90,171,255,0.25);
   margin-top: 14px;
   position: relative;
   z-index: 1;
-  text-shadow: 0 0 30px rgba(176,127,212,0.3);
+  text-shadow: 0 0 30px rgba(90,171,255,0.25);
 }
 
 .sc-datum.eerste { border-top: none; margin-top: 0; padding-top: 14px; }
@@ -144,7 +144,7 @@ body {
   margin: 0 16px 10px;
   background: linear-gradient(135deg, #1a1620 0%, #12101a 100%);
   border: 1px solid var(--wit08);
-  border-left: 2px solid rgba(90,100,200,0.4);
+  border-left: 2px solid rgba(90,171,255,0.5);
   border-radius: var(--radius);
   padding: 18px 18px 14px;
   cursor: pointer;
@@ -155,7 +155,7 @@ body {
   position: relative;
   z-index: 1;
   overflow: hidden;
-  box-shadow: -4px 0 20px rgba(60,80,200,0.12), 0 4px 24px rgba(0,0,0,0.4);
+  box-shadow: -4px 0 20px rgba(90,171,255,0.1), 0 4px 24px rgba(0,0,0,0.4);
 }
 
 .sc-les-card::before {
@@ -176,7 +176,7 @@ body {
 .sc-les-tijd {
   font-size: 13px;
   font-weight: 500;
-  color: var(--paars-licht);
+  color: var(--blauw);
   letter-spacing: 0.06em;
   margin-bottom: 4px;
 }
@@ -280,7 +280,7 @@ body {
 
 .sc-btn-wrap { padding: 0 20px 16px; display: flex; flex-direction: column; gap: 8px; position: relative; z-index: 1; }
 
-.sc-btn { width: 100%; padding: 14px; border-radius: var(--radius-sm); font-size: 14px; font-weight: 500; font-family: var(--font-body); cursor: pointer; border: none; transition: opacity 0.15s, transform 0.1s; letter-spacing: 0.02em; display: flex; align-items: center; justify-content: center; gap: 10px; }
+.sc-btn { width: 100%; padding: 16px; border-radius: var(--radius-sm); font-size: 15px; font-weight: 500; font-family: var(--font-body); cursor: pointer; border: none; transition: opacity 0.15s, transform 0.1s; letter-spacing: 0.02em; display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 52px; }
 .sc-btn:hover { opacity: 0.85; }
 .sc-btn:active { transform: scale(0.98); }
 .sc-btn:disabled { opacity: 0.4; cursor: not-allowed; }
@@ -290,7 +290,7 @@ body {
 .sc-btn-reservist-af { background: var(--wit04); color: var(--wit35); border: 1px solid var(--wit08); }
 .sc-btn-contact { background: linear-gradient(135deg, #1e1820, #2a1535); color: var(--paars-licht); border: 1px solid var(--paars-rand); }
 
-.sc-ricardo-avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; object-position: top; border: 1px solid var(--paars-rand); flex-shrink: 0; }
+.sc-ricardo-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; object-position: top; border: 2px solid var(--paars-rand); flex-shrink: 0; }
 
 /* ── Deelnemers ───────────────────────────────────────────────────────────── */
 
@@ -388,8 +388,8 @@ body {
   backdrop-filter: blur(12px);
 }
 
-.sc-nav-btn { flex: 1; padding: 10px 8px; border-radius: var(--radius-sm); background: none; border: none; color: var(--wit35); font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; text-align: center; cursor: pointer; font-family: var(--font-body); font-weight: 500; transition: all 0.15s; }
-.sc-nav-btn.active { background: var(--paars-zacht); color: var(--paars-licht); }
+.sc-nav-btn { flex: 1; padding: 12px 8px; border-radius: var(--radius-sm); background: none; border: none; color: var(--wit35); font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; text-align: center; cursor: pointer; font-family: var(--font-body); font-weight: 500; transition: all 0.15s; min-height: 44px; }
+.sc-nav-btn.active { background: rgba(90,171,255,0.12); color: var(--blauw); border: 1px solid rgba(90,171,255,0.3); }
 
 /* ── Loading ──────────────────────────────────────────────────────────────── */
 

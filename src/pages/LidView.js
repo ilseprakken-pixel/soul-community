@@ -333,15 +333,42 @@ export default function LidView() {
 
   return (
     <div className="page">
-      <div className="sc-header">
-        <div className="sc-logo">
-          <img className="sc-logo-img" src={LOGO} alt="Soul Community" onError={e => e.target.style.display='none'}/>
-          <div className="sc-logo-tekst">
-            <div className="sc-logo-naam">Soul Community</div>
-            <div className="sc-logo-sub">Be the best you can be</div>
+      <div style={{
+        position: 'relative',
+        height: 220,
+        overflow: 'hidden',
+        flexShrink: 0,
+      }}>
+        <img src="/hero.jpg" alt="Soul Community" style={{
+          width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 20%',
+          display: 'block',
+        }}/>
+        <div style={{
+          position: 'absolute', inset: 0,
+          background: 'linear-gradient(to bottom, rgba(10,8,9,0.3) 0%, rgba(10,8,9,0.5) 50%, rgba(10,8,9,0.95) 100%)',
+        }}/>
+        <div style={{
+          position: 'absolute', bottom: 0, left: 0, right: 0,
+          padding: '16px 20px',
+          display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <img src={LOGO} alt="Soul Community" style={{ width: 56, height: 56, objectFit: 'contain', filter: 'brightness(0) invert(1)' }}/>
+            <div>
+              <div style={{ fontFamily: 'var(--font-display)', fontSize: 28, letterSpacing: '0.08em', color: '#fff', lineHeight: 1 }}>Soul Community</div>
+              <div style={{ fontSize: 9, color: 'var(--goud)', letterSpacing: '0.2em', textTransform: 'uppercase', marginTop: 3 }}>Be the best you can be</div>
+            </div>
           </div>
+          <div className="sc-lid-pill">{lid.naam.split(' ')[0]}</div>
         </div>
-        <div className="sc-lid-pill">{lid.naam.split(' ')[0]}</div>
+      </div>
+
+      <div style={{ position: 'sticky', top: 0, zIndex: 40, background: 'rgba(10,8,9,0.95)', backdropFilter: 'blur(12px)', borderBottom: '1px solid var(--wit08)' }}>
+        <div className="sc-bottom-nav" style={{ position: 'relative', transform: 'none', left: 'auto', bottom: 'auto', maxWidth: 'none', padding: '8px 16px 8px' }}>
+          <button className={`sc-nav-btn${tab==='lessen'?' active':''}`} onClick={() => setTab('lessen')}>Lessen</button>
+          <button className={`sc-nav-btn${tab==='events'?' active':''}`} onClick={() => setTab('events')}>Events</button>
+          <button className={`sc-nav-btn${tab==='profiel'?' active':''}`} onClick={() => setTab('profiel')}>Profiel</button>
+        </div>
       </div>
 
       {tab === 'profiel' ? (
@@ -409,7 +436,7 @@ export default function LidView() {
           ))}
         </>
       )}
-      <BottomNav tab={tab} setTab={setTab}/>
+
       <Toast msg={toast}/>
     </div>
   );

@@ -70,7 +70,7 @@ export default function RicardoView() {
         </div>
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '40px 20px 24px' }}>
-        <img src="/ricardo.png" alt="Ricardo" style={{ width: 100, height: 100, borderRadius: '50%', objectFit: 'cover', objectPosition: 'top', border: '2px solid var(--paars-rand)', marginBottom: 16 }}/>
+        <img src="/ricardo.png" alt="Ricardo" style={{ width: 130, height: 130, borderRadius: '50%', objectFit: 'cover', objectPosition: 'top', border: '3px solid var(--paars-rand)', marginBottom: 20, boxShadow: '0 0 40px rgba(124,63,168,0.4)' }}/>
         <div style={{ fontFamily: 'var(--font-display)', fontSize: 28, letterSpacing: '0.06em', color: 'var(--wit)', marginBottom: 4 }}>Welkom terug</div>
         <div style={{ fontSize: 13, color: 'var(--wit35)' }}>Soul Community beheer</div>
       </div>
