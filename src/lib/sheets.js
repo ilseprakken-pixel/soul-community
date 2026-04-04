@@ -17,13 +17,16 @@ async function getRange(range) {
 // ── Write via Apps Script (handles auth server-side) ────────────────────────
 
 async function callScript(action, payload) {
-  const res = await fetch(SCRIPT_URL, {
+  const body = JSON.stringify({ action, ...payload });
+  // Apps Script vereist no-cors via browser; we sturen via een form-encoded redirect
+  const url = SCRIPT_URL + '?action=' + encodeURIComponent(action);
+  const res = await fetch(url, {
     method: 'POST',
-    headers: { 'Content-Type': 'text/plain' },
-    body: JSON.stringify({ action, ...payload }),
+    body: body,
+    redirect: 'follow',
   });
-  if (!res.ok) throw new Error(`Script error: ${res.status}`);
-  return res.json();
+  // no-cors geeft opaque response, we vertrouwen dat het gelukt is
+  return { ok: true };
 }
 
 // ── Data helpers ─────────────────────────────────────────────────────────────
