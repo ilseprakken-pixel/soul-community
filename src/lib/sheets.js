@@ -39,7 +39,7 @@ export async function getLessen() {
 
 export async function getEvents() {
   try {
-    const rows = await getRange('Events!A2:H100');
+    const rows = await getRange('Events!A2:I100');
     const nu = new Date();
     return rows
       .filter(r => r[7] === 'TRUE')
