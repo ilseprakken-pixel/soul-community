@@ -45,7 +45,7 @@ export async function getEvents() {
       .filter(r => r[7] === 'TRUE')
       .map(r => ({
         id: r[0], naam: r[1], datum: r[2], tijd: r[3],
-        locatie: r[4], beschrijving: r[5], prijs: r[6], fotoUrl: r[7] || null, actief: true,
+        locatie: r[4], beschrijving: r[5], prijs: r[6], fotoUrl: r[8] || null, actief: true,
         type: 'event'
       }))
       .filter(e => new Date(e.datum) >= new Date(nu.toDateString()))
