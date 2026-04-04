@@ -335,21 +335,6 @@ export default function LidView() {
     <div className="page">
       <div style={{
         position: 'relative',
-        height: 220,
-        overflow: 'hidden',
-        flexShrink: 0,
-      }}>
-        <img src="/hero.jpg" alt="Soul Community" style={{
-          width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 20%',
-          display: 'block',
-        }}/>
-        <div style={{
-          position: 'absolute', inset: 0,
-          background: 'linear-gradient(to bottom, rgba(10,8,9,0.3) 0%, rgba(10,8,9,0.5) 50%, rgba(10,8,9,0.95) 100%)',
-        }}/>
-        <div style={{
-          position: 'absolute', bottom: 0, left: 0, right: 0,
-          padding: '16px 20px',
           display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
