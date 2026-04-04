@@ -69,8 +69,13 @@ export default function RicardoView() {
           </div>
         </div>
       </div>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '40px 20px 24px' }}>
+        <img src="/ricardo.png" alt="Ricardo" style={{ width: 100, height: 100, borderRadius: '50%', objectFit: 'cover', objectPosition: 'top', border: '2px solid var(--paars-rand)', marginBottom: 16 }}/>
+        <div style={{ fontFamily: 'var(--font-display)', fontSize: 28, letterSpacing: '0.06em', color: 'var(--wit)', marginBottom: 4 }}>Welkom terug</div>
+        <div style={{ fontSize: 13, color: 'var(--wit35)' }}>Soul Community beheer</div>
+      </div>
       <div className="sc-login-card">
-        <div style={{ fontSize: 13, color: 'var(--wit35)', marginBottom: 16 }}>Beheerderstoegang</div>
+        <div style={{ fontSize: 13, color: 'var(--wit35)', marginBottom: 16 }}>Voer je wachtwoord in</div>
         <input type="password" className="sc-input" value={wachtwoord}
           onChange={e => setWachtwoord(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && login()}
