@@ -1,251 +1,206 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { getLessen, getAanmeldingen, afmelden } from '../lib/sheets';
+import { getLessen, getEvents, getAanmeldingen, afmelden, formatDatum, groeperPerDatum } from '../lib/sheets';
 
 const BEHEER_TOKEN = process.env.REACT_APP_BEHEER_TOKEN;
+const LOGO = '/logo.png';
 
 function initials(naam) {
-  const parts = naam.trim().split(' ');
-  if (parts.length >= 2) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-  return naam.substring(0, 2).toUpperCase();
+  const p = naam.trim().split(' ');
+  return p.length >= 2 ? (p[0][0] + p[p.length-1][0]).toUpperCase() : naam.substring(0,2).toUpperCase();
 }
 
 function Toast({ msg }) {
-  return <div className={`toast ${msg ? 'show' : ''}`}>{msg}</div>;
+  return <div className={`sc-toast${msg ? ' show' : ''}`}>{msg}</div>;
 }
 
 export default function RicardoView() {
   const [toegang, setToegang] = useState(false);
   const [wachtwoord, setWachtwoord] = useState('');
   const [lessen, setLessen] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [geselecteerdeLes, setGeselecteerdeLes] = useState(null);
+  const [events, setEvents] = useState([]);
   const [aanmeldingenMap, setAanmeldingenMap] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [geselecteerd, setGeselecteerd] = useState(null);
+  const [tab, setTab] = useState('lessen');
   const [toast, setToast] = useState('');
 
-  const showToast = (msg) => {
-    setToast(msg);
-    setTimeout(() => setToast(''), 2800);
-  };
+  const showToast = (msg) => { setToast(msg); setTimeout(() => setToast(''), 2800); };
 
-  const laadLessen = useCallback(async () => {
+  const laadData = useCallback(async () => {
     setLoading(true);
     try {
-      const data = await getLessen();
-      const actief = data.filter(l => l.actief);
-      setLessen(actief);
-      // Laad aanmeldingen voor alle lessen parallel
+      const [lessenData, eventsData] = await Promise.all([getLessen(), getEvents()]);
+      setLessen(lessenData);
+      setEvents(eventsData);
       const entries = await Promise.all(
-        actief.map(async (les) => {
-          const a = await getAanmeldingen(les.id);
-          return [les.id, a];
-        })
+        lessenData.map(async les => [les.id, await getAanmeldingen(les.id)])
       );
       setAanmeldingenMap(Object.fromEntries(entries));
-    } catch {
-      // silent
-    } finally {
-      setLoading(false);
-    }
+    } catch {}
+    finally { setLoading(false); }
   }, []);
 
-  useEffect(() => {
-    if (toegang) laadLessen();
-  }, [toegang, laadLessen]);
+  useEffect(() => { if (toegang) laadData(); }, [toegang, laadData]);
 
   const login = () => {
     if (wachtwoord === BEHEER_TOKEN) setToegang(true);
     else alert('Onjuist wachtwoord');
   };
 
-  const openLes = (les) => setGeselecteerdeLes(les);
-  const sluit = () => setGeselecteerdeLes(null);
-
   const handleVerwijder = async (lidId, naam) => {
     if (!window.confirm(`${naam} afmelden?`)) return;
     try {
-      await afmelden(lidId, geselecteerdeLes.id);
-      const data = await getAanmeldingen(geselecteerdeLes.id);
-      setAanmeldingenMap(prev => ({ ...prev, [geselecteerdeLes.id]: data }));
+      await afmelden(lidId, geselecteerd.id);
+      await new Promise(r => setTimeout(r, 800));
+      const data = await getAanmeldingen(geselecteerd.id);
+      setAanmeldingenMap(prev => ({ ...prev, [geselecteerd.id]: data }));
       showToast(`${naam} afgemeld`);
-    } catch {
-      showToast('Er ging iets mis');
-    }
+    } catch { showToast('Er ging iets mis'); }
   };
 
-  // ── Login scherm ─────────────────────────────────────────────────────────
-
-  if (!toegang) {
-    return (
-      <div className="page">
-        <div className="page-header">
-          <div className="logo">Soul <span>Community</span></div>
-          <div className="page-sub">Beheerder</div>
-        </div>
-        <div className="section">
-          <div className="card" style={{ padding: 20 }}>
-            <p style={{ fontSize: 14, color: 'var(--grijs)', marginBottom: 12 }}>
-              Voer het beheerderswachtwoord in
-            </p>
-            <input
-              type="password"
-              value={wachtwoord}
-              onChange={e => setWachtwoord(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && login()}
-              placeholder="Wachtwoord"
-              style={{
-                width: '100%', padding: '10px 12px', border: '1px solid var(--rand)',
-                borderRadius: 8, fontSize: 15, fontFamily: 'var(--font-body)',
-                background: 'var(--wit)', marginBottom: 10
-              }}
-            />
-            <button className="btn btn-aanmeld" onClick={login}>Inloggen</button>
+  if (!toegang) return (
+    <div className="page">
+      <div className="sc-header">
+        <div className="sc-logo">
+          <img className="sc-logo-img" src={LOGO} alt="Soul Community" onError={e => e.target.style.display='none'}/>
+          <div className="sc-logo-tekst">
+            <div className="sc-logo-naam">Soul Community</div>
+            <div className="sc-logo-sub">Beheer</div>
           </div>
         </div>
       </div>
-    );
-  }
+      <div className="sc-login-card">
+        <div style={{ fontSize: 13, color: 'var(--wit35)', marginBottom: 16 }}>Beheerderstoegang</div>
+        <input type="password" className="sc-input" value={wachtwoord}
+          onChange={e => setWachtwoord(e.target.value)}
+          onKeyDown={e => e.key === 'Enter' && login()}
+          placeholder="Wachtwoord"/>
+        <button className="sc-btn sc-btn-aanmeld" onClick={login}>Inloggen</button>
+      </div>
+    </div>
+  );
 
-  // ── Detailview les ───────────────────────────────────────────────────────
-
-  if (geselecteerdeLes) {
-    const les = geselecteerdeLes;
+  if (geselecteerd && geselecteerd.type === 'les') {
+    const les = geselecteerd;
     const alle = aanmeldingenMap[les.id] || [];
-    const leiders = alle.filter(a => a.rol === 'leider' && a.status === 'bevestigd');
-    const volgers = alle.filter(a => a.rol === 'volger' && a.status === 'bevestigd');
-    const reservisten = alle.filter(a => a.status === 'reservist');
+    const leiders = alle.filter(a => a.rol==='leider' && a.status==='bevestigd');
+    const volgers = alle.filter(a => a.rol==='volger' && a.status==='bevestigd');
+    const reservisten = alle.filter(a => a.status==='reservist');
     const aantalL = leiders.length;
     const aantalV = volgers.length;
 
     return (
       <div className="page">
-        <div className="detail-header">
-          <button className="back-btn" onClick={sluit}>← Overzicht</button>
-          <div className="detail-naam">{les.naam}</div>
-          <div className="detail-tijd">Woensdag {les.datum} · {les.tijd}</div>
-        </div>
-
+        <button className="sc-back" onClick={() => setGeselecteerd(null)}>← Overzicht</button>
+        <div className="sc-detail-naam">{les.naam}</div>
+        <div className="sc-detail-tijd">{formatDatum(les.datum)} · {les.tijd}</div>
         {aantalL !== aantalV && (
-          <div className="banner banner-warning">
-            {Math.abs(aantalL - aantalV)} {aantalL < aantalV ? 'leider' : 'volger'}(s) tekort
+          <div className="sc-banner sc-banner-warning">
+            {Math.abs(aantalL-aantalV)} {aantalL<aantalV?'leider':'volger'}(s) tekort
             {reservisten.length > 0 ? ` · ${reservisten.length} reservist(en) beschikbaar` : ''}
           </div>
         )}
-
-        <div className="stats-row">
-          <div className="stat-box">
-            <div className="stat-num leider">{aantalL}</div>
-            <div className="stat-lbl">Leiders</div>
-          </div>
-          <div className="stat-box">
-            <div className="stat-num volger">{aantalV}</div>
-            <div className="stat-lbl">Volgers</div>
-          </div>
+        <div className="sc-stats">
+          <div className="sc-stat"><div className="sc-stat-num leider">{aantalL}</div><div className="sc-stat-lbl">Leiders</div></div>
+          <div className="sc-stat"><div className="sc-stat-num volger">{aantalV}</div><div className="sc-stat-lbl">Volgers</div></div>
         </div>
-
-        <div className="sectie-label">Leiders ({aantalL})</div>
+        <div className="sc-sectie">Leiders ({aantalL})</div>
         {leiders.map(a => (
-          <div key={a.id} className="deelnemer-rij">
-            <div className="avatar av-l">{initials(a.naam)}</div>
-            <div className="deelnemer-naam">{a.naam}</div>
-            <button
-              onClick={() => handleVerwijder(a.lidId, a.naam)}
-              style={{ fontSize: 11, color: 'var(--grijs)', background: 'none', border: 'none', cursor: 'pointer' }}
-            >
-              Afmelden
-            </button>
+          <div key={a.id} className="sc-deelnemer">
+            <div className="sc-avatar av-l">{initials(a.naam)}</div>
+            <div className="sc-deelnemer-naam">{a.naam}</div>
+            <button className="sc-remove-btn" onClick={() => handleVerwijder(a.lidId, a.naam)}>Afmelden</button>
           </div>
         ))}
-
-        <div className="sectie-label">Volgers ({aantalV})</div>
+        <div className="sc-sectie">Volgers ({aantalV})</div>
         {volgers.map(a => (
-          <div key={a.id} className="deelnemer-rij">
-            <div className="avatar av-v">{initials(a.naam)}</div>
-            <div className="deelnemer-naam">{a.naam}</div>
-            <button
-              onClick={() => handleVerwijder(a.lidId, a.naam)}
-              style={{ fontSize: 11, color: 'var(--grijs)', background: 'none', border: 'none', cursor: 'pointer' }}
-            >
-              Afmelden
-            </button>
+          <div key={a.id} className="sc-deelnemer">
+            <div className="sc-avatar av-v">{initials(a.naam)}</div>
+            <div className="sc-deelnemer-naam">{a.naam}</div>
+            <button className="sc-remove-btn" onClick={() => handleVerwijder(a.lidId, a.naam)}>Afmelden</button>
           </div>
         ))}
-
-        {reservisten.length > 0 && (
-          <>
-            <div className="sectie-label">Reservisten ({reservisten.length})</div>
-            {reservisten.map(a => (
-              <div key={a.id} className="deelnemer-rij">
-                <div className="avatar av-r">{initials(a.naam)}</div>
-                <div className="deelnemer-naam">{a.naam}</div>
-                <div className="rol-pill rp-r" style={{ marginRight: 8 }}>wacht</div>
-                <button
-                  onClick={() => handleVerwijder(a.lidId, a.naam)}
-                  style={{ fontSize: 11, color: 'var(--grijs)', background: 'none', border: 'none', cursor: 'pointer' }}
-                >
-                  Verwijder
-                </button>
-              </div>
-            ))}
-          </>
-        )}
-
-        <Toast msg={toast} />
+        {reservisten.length > 0 && <>
+          <div className="sc-sectie">Reservisten ({reservisten.length})</div>
+          {reservisten.map(a => (
+            <div key={a.id} className="sc-deelnemer">
+              <div className="sc-avatar av-r">{initials(a.naam)}</div>
+              <div className="sc-deelnemer-naam">{a.naam}</div>
+              <div className="sc-rol-pill rp-r" style={{ marginRight: 8 }}>Wacht</div>
+              <button className="sc-remove-btn" onClick={() => handleVerwijder(a.lidId, a.naam)}>Verwijder</button>
+            </div>
+          ))}
+        </>}
+        <Toast msg={toast}/>
       </div>
     );
   }
 
-  // ── Overzichtslijst ──────────────────────────────────────────────────────
+  const groepen = groeperPerDatum(tab==='lessen' ? lessen : [], tab==='events' ? events : []);
+  const datums = Object.keys(groepen).sort();
 
   return (
     <div className="page">
-      <div className="admin-header">
-        <div>
-          <div className="logo">Soul <span>Community</span></div>
-          <div className="page-sub" style={{ marginTop: 2 }}>Beheerder · Ricardo</div>
-        </div>
-        <div className="admin-badge">Beheer</div>
-      </div>
-
-      <div className="legend">
-        <div className="legend-item"><div className="legend-dot" style={{ background: '#378ADD' }} /> Leiders</div>
-        <div className="legend-item"><div className="legend-dot" style={{ background: '#D4537E' }} /> Volgers</div>
-      </div>
-
-      <div className="section">
-        {loading && (
-          <div className="loading">
-            <span className="loading-dot" /><span className="loading-dot" /><span className="loading-dot" />
+      <div className="sc-header">
+        <div className="sc-logo">
+          <img className="sc-logo-img" src={LOGO} alt="Soul Community" onError={e => e.target.style.display='none'}/>
+          <div className="sc-logo-tekst">
+            <div className="sc-logo-naam">Soul Community</div>
+            <div className="sc-logo-sub">Be the best you can be</div>
           </div>
-        )}
-        {lessen.map(les => {
-          const alle = aanmeldingenMap[les.id] || [];
-          const aantalL = alle.filter(a => a.rol === 'leider' && a.status === 'bevestigd').length;
-          const aantalV = alle.filter(a => a.rol === 'volger' && a.status === 'bevestigd').length;
-          const aantalR = alle.filter(a => a.status === 'reservist').length;
-          const totaal = aantalL + aantalV || 1;
-          const onbalans = aantalL !== aantalV;
-
-          return (
-            <button key={les.id} className="les-card" onClick={() => openLes(les)}>
-              <div className="les-tijd">{les.tijd}</div>
-              <div className="les-naam">{les.naam}</div>
-              <div className="balans-row">
-                <div className="balans-bar">
-                  <div className="bar-l" style={{ width: `${Math.round(aantalL / totaal * 100)}%` }} />
-                  <div className="bar-v" style={{ width: `${Math.round(aantalV / totaal * 100)}%` }} />
-                </div>
-                <div className="balans-tekst">{aantalL}L · {aantalV}V</div>
-              </div>
-              {onbalans
-                ? <span className="badge badge-tekort">{Math.abs(aantalL - aantalV)} {aantalL < aantalV ? 'leider' : 'volger'}(s) tekort{aantalR > 0 ? ` · ${aantalR} reservist` : ''}</span>
-                : <span className="badge badge-ok">In balans</span>
-              }
-            </button>
-          );
-        })}
+        </div>
+        <div className="sc-admin-badge">Beheer</div>
       </div>
 
-      <Toast msg={toast} />
+      <div className="sc-bottom-nav">
+        <button className={`sc-nav-btn${tab==='lessen'?' active':''}`} onClick={() => setTab('lessen')}>Lessen</button>
+        <button className={`sc-nav-btn${tab==='events'?' active':''}`} onClick={() => setTab('events')}>Events</button>
+      </div>
+
+      {loading && <div className="sc-loading"><span className="sc-dot-anim"/><span className="sc-dot-anim"/><span className="sc-dot-anim"/></div>}
+
+      {datums.map((datum, i) => (
+        <div key={datum}>
+          <div className={`sc-datum${i===0?' eerste':''}`}>{formatDatum(datum)}</div>
+          {groepen[datum].map(item => {
+            if (item.type === 'les') {
+              const alle = aanmeldingenMap[item.id] || [];
+              const aantalL = alle.filter(a => a.rol==='leider' && a.status==='bevestigd').length;
+              const aantalV = alle.filter(a => a.rol==='volger' && a.status==='bevestigd').length;
+              const aantalR = alle.filter(a => a.status==='reservist').length;
+              const totaal = aantalL + aantalV || 1;
+              const onbalans = aantalL !== aantalV;
+              return (
+                <button key={item.id} className={`sc-les-card${onbalans?' tekort':''}`} onClick={() => setGeselecteerd({ ...item, type: 'les' })}>
+                  <div className="sc-les-tijd">{item.tijd}</div>
+                  <div className="sc-les-naam">{item.naam}</div>
+                  <div className="sc-balans-row">
+                    <div className="sc-balans-bar">
+                      <div className="bar-l" style={{ width: `${Math.round(aantalL/totaal*100)}%` }}/>
+                      <div className="bar-v" style={{ width: `${Math.round(aantalV/totaal*100)}%` }}/>
+                    </div>
+                    <div className="sc-balans-tekst">{aantalL}L · {aantalV}V</div>
+                  </div>
+                  {onbalans
+                    ? <span className="sc-badge sc-b-tekort">{Math.abs(aantalL-aantalV)} {aantalL<aantalV?'leider':'volger'}(s) tekort{aantalR>0?` · ${aantalR} reservist`:''}</span>
+                    : <span className="sc-badge sc-b-ok">In balans</span>}
+                </button>
+              );
+            }
+            if (item.type === 'event') {
+              return (
+                <div key={item.id} className="sc-event-card">
+                  <div className="sc-event-tag">Event</div>
+                  <div className="sc-event-naam">{item.naam}</div>
+                  <div className="sc-event-sub">{item.tijd} · {item.locatie}</div>
+                </div>
+              );
+            }
+            return null;
+          })}
+        </div>
+      ))}
+      <Toast msg={toast}/>
     </div>
   );
 }
