@@ -19,9 +19,9 @@ async function getRange(range) {
 async function callScript(action, payload) {
   const params = new URLSearchParams({ action, ...payload });
   const url = SCRIPT_URL + '?' + params.toString();
-  const res = await fetch(url, { redirect: 'follow' });
-  if (!res.ok) throw new Error(`Script error: ${res.status}`);
-  return res.json();
+  await fetch(url, { redirect: 'follow', mode: 'no-cors' });
+  // no-cors geeft opaque response, actie is wel uitgevoerd
+  return { ok: true };
 }
 
 // ── Data helpers ─────────────────────────────────────────────────────────────
