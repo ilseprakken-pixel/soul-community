@@ -88,12 +88,12 @@ function ProfielTab({ lid, mijnAanmeldingen, lessen }) {
         ))}
       </div>
 
-      <a href={`${WHATSAPP}?text=Hoi Ricardo!`} style={{ margin: '8px 16px 0', padding: '20px 16px', background: 'var(--zwart3)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--wit08)', position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', textDecoration: 'none', gap: 12 }}>
-        <div style={{ fontSize: 11, color: 'var(--wit35)', letterSpacing: '0.08em', textTransform: 'uppercase', alignSelf: 'flex-start' }}>Contact</div>
-        <img src={RICARDO} alt="Ricardo" style={{ width: 90, height: 90, borderRadius: '50%', objectFit: 'cover', objectPosition: 'top', border: '2px solid var(--paars-rand)' }}/>
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: 16, color: 'var(--wit80)', fontWeight: 500 }}>Ricardo</div>
-          <div style={{ fontSize: 13, color: 'var(--paars-licht)', marginTop: 4 }}>Stuur een WhatsApp bericht</div>
+      <a href={`${WHATSAPP}?text=Hoi Ricardo!`} style={{ margin: '8px 16px 0', padding: '16px', background: 'var(--zwart3)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--wit08)', position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', textDecoration: 'none', gap: 16 }}>
+        <img src={RICARDO} alt="Ricardo" style={{ width: 90, height: 90, borderRadius: '50%', objectFit: 'cover', objectPosition: 'top', border: '2px solid var(--paars-rand)', flexShrink: 0 }}/>
+        <div>
+          <div style={{ fontSize: 11, color: 'var(--wit35)', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 6 }}>Contact</div>
+          <div style={{ fontSize: 16, color: 'var(--wit80)', fontWeight: 500, marginBottom: 4 }}>Ricardo</div>
+          <div style={{ fontSize: 13, color: 'var(--paars-licht)' }}>Stuur een WhatsApp bericht</div>
         </div>
       </a>
     </div>
