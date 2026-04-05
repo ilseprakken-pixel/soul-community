@@ -116,6 +116,44 @@ export default function RicardoView() {
     </div>
   );
 
+  if (geselecteerd && geselecteerd.type === 'event') {
+    const ev = geselecteerd;
+    return (
+      <div className="page">
+        <div className="sc-header">
+          <div className="sc-logo">
+            <img className="sc-logo-img" src={LOGO} alt="Soul Community" onError={e => e.target.style.display='none'}/>
+            <div className="sc-logo-tekst"><div className="sc-logo-naam">Soul Community</div></div>
+          </div>
+          <div className="sc-admin-badge">Beheer</div>
+        </div>
+        <button className="sc-back" onClick={() => setGeselecteerd(null)}>← Overzicht</button>
+        {ev.fotoUrl && <img src={ev.fotoUrl} alt={ev.naam} style={{ width: '100%', height: 200, objectFit: 'cover', display: 'block' }}/>}
+        <div style={{ padding: '16px 20px 4px' }}>
+          <div className="sc-event-tag">Event</div>
+        </div>
+        <div className="sc-detail-naam">{ev.naam}</div>
+        <div className="sc-detail-tijd">{formatDatum(ev.datum)} · {ev.tijd}</div>
+        <div className="sc-stats">
+          <div className="sc-stat" style={{ textAlign: 'left' }}>
+            <div style={{ fontSize: 11, color: 'var(--wit35)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>Locatie</div>
+            <div style={{ fontSize: 14, color: 'var(--wit80)' }}>{ev.locatie || '—'}</div>
+          </div>
+          <div className="sc-stat" style={{ textAlign: 'left' }}>
+            <div style={{ fontSize: 11, color: 'var(--wit35)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>Prijs</div>
+            <div style={{ fontSize: 14, color: 'var(--wit80)' }}>{ev.prijs || 'Gratis'}</div>
+          </div>
+        </div>
+        {ev.beschrijving && (
+          <div style={{ margin: '0 20px 16px', padding: '14px', background: 'var(--zwart3)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--wit08)', fontSize: 14, color: 'var(--wit60)', lineHeight: 1.6, position: 'relative', zIndex: 1 }}>
+            {ev.beschrijving}
+          </div>
+        )}
+        <Toast msg={toast}/>
+      </div>
+    );
+  }
+
   if (geselecteerd && geselecteerd.type === 'les') {
     const les = geselecteerd;
     const alle = aanmeldingenMap[les.id] || [];
@@ -279,13 +317,13 @@ export default function RicardoView() {
               }
               if (item.type === 'event') {
                 return (
-                  <div key={item.id} className="sc-event-card">
+                  <button key={item.id} className="sc-event-card" onClick={() => setGeselecteerd({ ...item, type: 'event' })}>
                     <div className="sc-event-body">
                       <div className="sc-event-tag">Event</div>
                       <div className="sc-event-naam">{item.naam}</div>
                       <div className="sc-event-sub">{item.tijd} · {item.locatie}</div>
                     </div>
-                  </div>
+                  </button>
                 );
               }
               return null;
