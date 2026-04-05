@@ -42,6 +42,7 @@ export default function RicardoView() {
   const [loading, setLoading] = useState(false);
   const [geselecteerd, setGeselecteerd] = useState(null);
   const [tab, setTab] = useState('lessen');
+  const [leden, setLeden] = useState([]);
   const [toast, setToast] = useState('');
   const [handmatigNaam, setHandmatigNaam] = useState('');
   const [handmatigRol, setHandmatigRol] = useState('leider');
@@ -51,6 +52,11 @@ export default function RicardoView() {
   const laadData = useCallback(async () => {
     setLoading(true);
     try {
+      const ledenUrl = `https://sheets.googleapis.com/v4/spreadsheets/${process.env.REACT_APP_SHEET_ID}/values/Leden!A2:F200?key=${process.env.REACT_APP_GOOGLE_API_KEY}`;
+      const ledenRes = await fetch(ledenUrl);
+      const ledenData = await ledenRes.json();
+      const ledenLijst = (ledenData.values || []).map(r => ({ id: r[0], naam: r[1], email: r[2], rol: r[3], isReservist: r[4] === 'TRUE' }));
+      setLeden(ledenLijst);
       const [lessenData, eventsData] = await Promise.all([getLessen(), getEvents()]);
       setLessen(lessenData);
       setEvents(eventsData);
@@ -254,9 +260,33 @@ export default function RicardoView() {
       <div className="sc-bottom-nav">
         <button className={`sc-nav-btn${tab==='lessen'?' active':''}`} onClick={() => setTab('lessen')}>Lessen</button>
         <button className={`sc-nav-btn${tab==='events'?' active':''}`} onClick={() => setTab('events')}>Events</button>
+        <button className={`sc-nav-btn${tab==='leden'?' active':''}`} onClick={() => setTab('leden')}>Leden</button>
       </div>
 
       {loading && <div className="sc-loading"><span className="sc-dot-anim"/><span className="sc-dot-anim"/><span className="sc-dot-anim"/></div>}
+
+      {tab === 'leden' && (
+        <div>
+          <div style={{ padding: '16px 20px 8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ fontSize: 11, color: 'var(--wit35)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>{leden.length} leden</div>
+          </div>
+          {leden.map(l => (
+            <div key={l.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 20px', borderBottom: '1px solid var(--wit04)' }}>
+              <div className="sc-avatar" style={{ background: l.rol === 'leider' ? 'rgba(90,171,255,0.15)' : 'var(--paars-zacht)', color: l.rol === 'leider' ? 'var(--blauw)' : 'var(--paars-licht)' }}>
+                {l.naam.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase()}
+              </div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 14, color: 'var(--wit80)', fontWeight: 500 }}>{l.naam}</div>
+                <div style={{ fontSize: 11, color: 'var(--wit35)', marginTop: 2 }}>{l.email}</div>
+              </div>
+              <div style={{ display: 'flex', gap: 6 }}>
+                <span className={`sc-rol-pill ${l.rol === 'leider' ? 'rp-l' : 'rp-v'}`}>{l.rol}</span>
+                {l.isReservist && <span className="sc-rol-pill rp-r">reservist</span>}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
       {datums.map((datum, i) => {
         const itemsOpDag = groepen[datum].filter(item => item.type === 'les');
