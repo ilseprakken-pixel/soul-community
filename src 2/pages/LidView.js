@@ -6,7 +6,6 @@ import {
   groeperPerDatum, formatDatum
 } from '../lib/sheets';
 
-const LOGO = '/logo.png';
 const RICARDO = '/ricardo.png';
 const WHATSAPP = 'https://wa.me/31624185031';
 
@@ -40,7 +39,23 @@ function BottomNav({ tab, setTab }) {
   );
 }
 
-function ProfielTab({ lid, mijnAanmeldingen, lessen }) {
+function HeroHeader({ lid }) {
+  return (
+    <div style={{ position: 'relative', height: 220, overflow: 'hidden', flexShrink: 0 }}>
+      <img src="/hero.png" alt="Soul Community" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 20%', display: 'block' }}/>
+      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(10,8,9,0.1) 0%, rgba(10,8,9,0.75) 100%)' }}/>
+      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '16px 20px', display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between' }}>
+        <div>
+          <div style={{ fontFamily: 'var(--font-display)', fontSize: 28, letterSpacing: '0.08em', color: '#fff', lineHeight: 1, textShadow: '0 2px 8px rgba(0,0,0,0.8)' }}>Soul Community</div>
+          <div style={{ fontSize: 9, color: 'var(--goud)', letterSpacing: '0.2em', textTransform: 'uppercase', marginTop: 3 }}>Be the best you can be</div>
+        </div>
+        {lid && <div className="sc-lid-pill">{lid.naam.split(' ')[0]}</div>}
+      </div>
+    </div>
+  );
+}
+
+function ProfielTab({ lid, mijnAanmeldingen }) {
   const aantalLessen = mijnAanmeldingen.filter(a => a.status === 'bevestigd').length;
   const aantalReservist = mijnAanmeldingen.filter(a => a.status === 'reservist').length;
 
@@ -88,16 +103,14 @@ function ProfielTab({ lid, mijnAanmeldingen, lessen }) {
         ))}
       </div>
 
-      <div style={{ margin: '8px 16px 0', padding: '14px 16px', background: 'var(--zwart3)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--wit08)', position: 'relative', zIndex: 1 }}>
-        <div style={{ fontSize: 11, color: 'var(--wit35)', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 8 }}>Contact</div>
-        <a href={`${WHATSAPP}?text=Hoi Ricardo!`} style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
-          <img src={RICARDO} alt="Ricardo" className="sc-ricardo-avatar"/>
-          <div>
-            <div style={{ fontSize: 14, color: 'var(--wit80)', fontWeight: 500 }}>Ricardo</div>
-            <div style={{ fontSize: 12, color: 'var(--paars-licht)' }}>Stuur een WhatsApp bericht</div>
-          </div>
-        </a>
-      </div>
+      <a href={`${WHATSAPP}?text=Hoi Ricardo!`} style={{ margin: '8px 16px 0', padding: '16px', background: 'var(--zwart3)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--wit08)', position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', textDecoration: 'none', gap: 16 }}>
+        <img src={RICARDO} alt="Ricardo" style={{ width: 90, height: 90, borderRadius: '50%', objectFit: 'cover', objectPosition: 'top', border: '2px solid var(--paars-rand)', flexShrink: 0 }}/>
+        <div>
+          <div style={{ fontSize: 11, color: 'var(--wit35)', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 6 }}>Contact</div>
+          <div style={{ fontSize: 16, color: 'var(--wit80)', fontWeight: 500, marginBottom: 4 }}>Ricardo</div>
+          <div style={{ fontSize: 13, color: 'var(--paars-licht)' }}>Stuur een WhatsApp bericht</div>
+        </div>
+      </a>
     </div>
   );
 }
@@ -183,16 +196,12 @@ export default function LidView() {
   if (loading) return <div className="page"><Loading/></div>;
   if (error) return (
     <div className="page">
-      <div className="sc-header">
-        <div className="sc-logo">
-          <img className="sc-logo-img" src={LOGO} alt="Soul Community" onError={e => e.target.style.display='none'}/>
-          <div className="sc-logo-tekst"><div className="sc-logo-naam">Soul Community</div></div>
-        </div>
-      </div>
+      <HeroHeader lid={null}/>
       <div className="sc-error">{error}</div>
     </div>
   );
 
+  // Les detail
   if (geselecteerd && geselecteerd.type === 'les') {
     const les = geselecteerd;
     const gesloten = isGesloten(les.datum);
@@ -207,23 +216,18 @@ export default function LidView() {
     const mijn = mijnAanmeldingen.find(a => a.lesId === les.id);
     const ingeschreven = !!mijn && mijn.status === 'bevestigd';
     const alsReservist = !!mijn && mijn.status === 'reservist';
-    const kanReservist = lid.isReservist && tekort && tekort !== lid.rol && !ingeschreven && !gesloten;
+    const kanReservist = lid.isReservist && tekort && tekort !== lid.rol && !ingeschreven && gesloten;
     const reservistVol = reservisten.filter(r => r.rol === tekort).length >= tekortAantal;
     const totaal = aantalL + aantalV || 1;
 
     return (
       <div className="page">
-        <div className="sc-header">
-          <div className="sc-logo">
-            <img className="sc-logo-img" src={LOGO} alt="Soul Community" onError={e => e.target.style.display='none'}/>
-            <div className="sc-logo-tekst"><div className="sc-logo-naam">Soul Community</div></div>
-          </div>
-        </div>
+        <HeroHeader lid={lid}/>
         <button className="sc-back" onClick={sluit}>← Terug</button>
         <div className="sc-detail-naam">{les.naam}</div>
         <div className="sc-detail-tijd">{formatDatum(les.datum)} · {les.tijd}</div>
 
-        {tekort && !gesloten && <div className="sc-banner sc-banner-warning">{tekortAantal} {tekort}(s) tekort — reservisten kunnen invallen</div>}
+        {tekort && !gesloten && <div className="sc-banner sc-banner-warning">{tekortAantal} {tekort}(s) tekort — reservisten kunnen na 17:00 invallen</div>}
         {gesloten && <div className="sc-banner sc-banner-gesloten">Aanmeldingen gesloten om 17:00.</div>}
 
         <div className="sc-stats">
@@ -240,10 +244,13 @@ export default function LidView() {
             ) : (
               <button className="sc-btn sc-btn-aanmeld" onClick={() => handleAanmelden(lid.rol)} disabled={bezig}>Aanmelden als {lid.rol}</button>
             )}
-            {kanReservist && !alsReservist && !reservistVol && (
-              <button className="sc-btn sc-btn-reservist" onClick={() => handleAanmelden(tekort, 'reservist')} disabled={bezig}>Aanmelden als reservist ({tekort})</button>
-            )}
           </>}
+          {gesloten && kanReservist && !alsReservist && !reservistVol && (
+            <button className="sc-btn sc-btn-reservist" onClick={() => handleAanmelden(tekort, 'reservist')} disabled={bezig}>Invallen als {tekort}</button>
+          )}
+          {gesloten && kanReservist && !alsReservist && reservistVol && (
+            <div className="sc-banner sc-banner-info" style={{ margin: 0 }}>Alle reservistplekken zijn vergeven.</div>
+          )}
           <a href={`${WHATSAPP}?text=Hoi Ricardo, ik wil me ${gesloten ? 'afmelden' : 'iets vragen'} voor ${les.naam} op ${formatDatum(les.datum)}`}
             className="sc-btn sc-btn-contact" style={{ textDecoration: 'none' }}>
             <img src={RICARDO} alt="Ricardo" className="sc-ricardo-avatar"/>
@@ -282,16 +289,12 @@ export default function LidView() {
     );
   }
 
+  // Event detail
   if (geselecteerd && geselecteerd.type === 'event') {
     const ev = geselecteerd;
     return (
       <div className="page">
-        <div className="sc-header">
-          <div className="sc-logo">
-            <img className="sc-logo-img" src={LOGO} alt="Soul Community" onError={e => e.target.style.display='none'}/>
-            <div className="sc-logo-tekst"><div className="sc-logo-naam">Soul Community</div></div>
-          </div>
-        </div>
+        <HeroHeader lid={lid}/>
         <button className="sc-back" onClick={sluit}>← Terug</button>
         {ev.fotoUrl && <img src={ev.fotoUrl} alt={ev.naam} style={{ width: '100%', height: 200, objectFit: 'cover', display: 'block' }}/>}
         <div style={{ padding: '16px 20px 4px' }}>
@@ -326,53 +329,16 @@ export default function LidView() {
     );
   }
 
-  const itemsVoorTab = tab === 'lessen' ? lessen : tab === 'events' ? events : [];
-  const eventsVoorLessen = tab === 'lessen' ? events : [];
-  const groepen = groeperPerDatum(tab === 'lessen' ? lessen : [], tab === 'lessen' ? eventsVoorLessen : tab === 'events' ? events : []);
+  // Lijstview
+  const groepen = groeperPerDatum(tab === 'lessen' ? lessen : [], tab === 'lessen' ? events : tab === 'events' ? events : []);
   const datums = Object.keys(groepen).sort();
 
   return (
     <div className="page">
-      <div style={{
-        position: 'relative',
-        height: 220,
-        overflow: 'hidden',
-        flexShrink: 0,
-      }}>
-        <img src="/hero.png" alt="Soul Community" style={{
-          width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 20%',
-          display: 'block',
-        }}/>
-        <div style={{
-          position: 'absolute', inset: 0,
-          background: 'linear-gradient(to bottom, rgba(10,8,9,0.3) 0%, rgba(10,8,9,0.5) 50%, rgba(10,8,9,0.95) 100%)',
-        }}/>
-        <div style={{
-          position: 'absolute', bottom: 0, left: 0, right: 0,
-          padding: '16px 20px',
-          display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between',
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            
-            <div>
-              <div style={{ fontFamily: 'var(--font-display)', fontSize: 28, letterSpacing: '0.08em', color: '#fff', lineHeight: 1 }}>Soul Community</div>
-              <div style={{ fontSize: 9, color: 'var(--goud)', letterSpacing: '0.2em', textTransform: 'uppercase', marginTop: 3 }}>Be the best you can be</div>
-            </div>
-          </div>
-          <div className="sc-lid-pill">{lid.naam.split(' ')[0]}</div>
-        </div>
-      </div>
-
-      <div style={{ position: 'sticky', top: 0, zIndex: 40, background: 'rgba(10,8,9,0.95)', backdropFilter: 'blur(12px)', borderBottom: '1px solid var(--wit08)' }}>
-        <div className="sc-bottom-nav" style={{ position: 'relative', transform: 'none', left: 'auto', bottom: 'auto', maxWidth: 'none', padding: '8px 16px 8px' }}>
-          <button className={`sc-nav-btn${tab==='lessen'?' active':''}`} onClick={() => setTab('lessen')}>Lessen</button>
-          <button className={`sc-nav-btn${tab==='events'?' active':''}`} onClick={() => setTab('events')}>Events</button>
-          <button className={`sc-nav-btn${tab==='profiel'?' active':''}`} onClick={() => setTab('profiel')}>Profiel</button>
-        </div>
-      </div>
+      <HeroHeader lid={lid}/>
 
       {tab === 'profiel' ? (
-        <ProfielTab lid={lid} mijnAanmeldingen={mijnAanmeldingen} lessen={lessen}/>
+        <ProfielTab lid={lid} mijnAanmeldingen={mijnAanmeldingen}/>
       ) : (
         <>
           <div className="sc-greeting">Hallo {lid.naam.split(' ')[0]} · {lid.rol}</div>
@@ -436,7 +402,7 @@ export default function LidView() {
           ))}
         </>
       )}
-
+      <BottomNav tab={tab} setTab={setTab}/>
       <Toast msg={toast}/>
     </div>
   );

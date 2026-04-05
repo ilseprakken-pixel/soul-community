@@ -3,7 +3,6 @@ import { getLessen, getEvents, getAanmeldingen, afmelden, formatDatum, groeperPe
 
 const BEHEER_TOKEN = process.env.REACT_APP_BEHEER_TOKEN;
 const SCRIPT_URL = process.env.REACT_APP_SCRIPT_URL;
-const LOGO = '/logo.png';
 const RICARDO = '/ricardo.png';
 
 function initials(naam) {
@@ -15,14 +14,23 @@ function Toast({ msg }) {
   return <div className={`sc-toast${msg ? ' show' : ''}`}>{msg}</div>;
 }
 
-async function stuurReservistenOproep(lesId, lesNaam, datum, tijd) {
-  const params = new URLSearchParams({ action: 'reservistenOproep', lesId, lesNaam, datum, tijd });
-  await fetch(SCRIPT_URL + '?' + params.toString(), { redirect: 'follow', mode: 'no-cors' });
-}
-
-async function handmatigAanmelden(lidNaam, lidId, lesId, rol) {
-  const params = new URLSearchParams({ action: 'aanmelden', lidId, lesId, rol, status: 'bevestigd' });
-  await fetch(SCRIPT_URL + '?' + params.toString(), { redirect: 'follow', mode: 'no-cors' });
+function HeroHeader({ rechts }) {
+  return (
+    <div style={{ position: 'relative', height: 180, overflow: 'hidden', flexShrink: 0 }}>
+      <img src="/hero.png" alt="Soul Community" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 20%', display: 'block' }}/>
+      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(10,8,9,0.1) 0%, rgba(10,8,9,0.8) 100%)' }}/>
+      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '14px 20px', display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between' }}>
+        <div>
+          <div style={{ fontFamily: 'var(--font-display)', fontSize: 26, letterSpacing: '0.08em', color: '#fff', lineHeight: 1, textShadow: '0 2px 8px rgba(0,0,0,0.8)' }}>Soul Community</div>
+          <div style={{ fontSize: 9, color: 'var(--goud)', letterSpacing: '0.2em', textTransform: 'uppercase', marginTop: 3 }}>Be the best you can be</div>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <img src={RICARDO} alt="Ricardo" style={{ width: 40, height: 40, borderRadius: '50%', objectFit: 'cover', objectPosition: 'top', border: '2px solid var(--paars-rand)' }}/>
+          <div className="sc-admin-badge">Beheer</div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default function RicardoView() {
@@ -75,13 +83,15 @@ export default function RicardoView() {
 
   const handleReservistenOproep = async (les) => {
     if (!window.confirm(`Reservistenoproep sturen voor ${les.naam}?`)) return;
-    await stuurReservistenOproep(les.id, les.naam, les.datum, les.tijd);
+    const params = new URLSearchParams({ action: 'reservistenOproep', lesId: les.id, lesNaam: les.naam, datum: les.datum, tijd: les.tijd });
+    await fetch(SCRIPT_URL + '?' + params.toString(), { redirect: 'follow', mode: 'no-cors' });
     showToast('Oproep verstuurd naar reservisten!');
   };
 
   const handleHandmatigAanmelden = async (les) => {
     if (!handmatigNaam.trim()) { showToast('Vul een naam in'); return; }
-    await handmatigAanmelden(handmatigNaam, 'handmatig_' + Date.now(), les.id, handmatigRol);
+    const params = new URLSearchParams({ action: 'aanmelden', lidId: 'handmatig_' + Date.now(), lesId: les.id, rol: handmatigRol, status: 'bevestigd' });
+    await fetch(SCRIPT_URL + '?' + params.toString(), { redirect: 'follow', mode: 'no-cors' });
     await new Promise(r => setTimeout(r, 900));
     const data = await getAanmeldingen(les.id);
     setAanmeldingenMap(prev => ({ ...prev, [les.id]: data }));
@@ -91,18 +101,17 @@ export default function RicardoView() {
 
   if (!toegang) return (
     <div className="page">
-      <div className="sc-header">
-        <div className="sc-logo">
-          <img className="sc-logo-img" src={LOGO} alt="Soul Community" onError={e => e.target.style.display='none'}/>
-          <div className="sc-logo-tekst">
-            <div className="sc-logo-naam">Soul Community</div>
-            <div className="sc-logo-sub">Beheer</div>
-          </div>
+      <div style={{ position: 'relative', height: 200, overflow: 'hidden' }}>
+        <img src="/hero.png" alt="Soul Community" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 20%' }}/>
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(10,8,9,0.1) 0%, rgba(10,8,9,0.8) 100%)' }}/>
+        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '16px 20px' }}>
+          <div style={{ fontFamily: 'var(--font-display)', fontSize: 28, letterSpacing: '0.08em', color: '#fff', lineHeight: 1 }}>Soul Community</div>
+          <div style={{ fontSize: 9, color: 'var(--goud)', letterSpacing: '0.2em', textTransform: 'uppercase', marginTop: 3 }}>Beheerderspaneel</div>
         </div>
       </div>
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '40px 20px 24px' }}>
-        <img src={RICARDO} alt="Ricardo" style={{ width: 130, height: 130, borderRadius: '50%', objectFit: 'cover', objectPosition: 'top', border: '3px solid var(--paars-rand)', marginBottom: 20, boxShadow: '0 0 40px rgba(124,63,168,0.4)' }}/>
-        <div style={{ fontFamily: 'var(--font-display)', fontSize: 28, letterSpacing: '0.06em', color: 'var(--wit)', marginBottom: 4 }}>Welkom terug</div>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '32px 20px 24px' }}>
+        <img src={RICARDO} alt="Ricardo" style={{ width: 110, height: 110, borderRadius: '50%', objectFit: 'cover', objectPosition: 'top', border: '3px solid var(--paars-rand)', marginBottom: 16, boxShadow: '0 0 40px rgba(124,63,168,0.4)' }}/>
+        <div style={{ fontFamily: 'var(--font-display)', fontSize: 26, letterSpacing: '0.06em', color: 'var(--wit)', marginBottom: 4 }}>Welkom terug</div>
         <div style={{ fontSize: 13, color: 'var(--wit35)' }}>Soul Community beheer</div>
       </div>
       <div className="sc-login-card">
@@ -116,17 +125,12 @@ export default function RicardoView() {
     </div>
   );
 
+  // Event detail
   if (geselecteerd && geselecteerd.type === 'event') {
     const ev = geselecteerd;
     return (
       <div className="page">
-        <div className="sc-header">
-          <div className="sc-logo">
-            <img className="sc-logo-img" src={LOGO} alt="Soul Community" onError={e => e.target.style.display='none'}/>
-            <div className="sc-logo-tekst"><div className="sc-logo-naam">Soul Community</div></div>
-          </div>
-          <div className="sc-admin-badge">Beheer</div>
-        </div>
+        <HeroHeader/>
         <button className="sc-back" onClick={() => setGeselecteerd(null)}>← Overzicht</button>
         {ev.fotoUrl && <img src={ev.fotoUrl} alt={ev.naam} style={{ width: '100%', height: 200, objectFit: 'cover', display: 'block' }}/>}
         <div style={{ padding: '16px 20px 4px' }}>
@@ -154,6 +158,7 @@ export default function RicardoView() {
     );
   }
 
+  // Les detail
   if (geselecteerd && geselecteerd.type === 'les') {
     const les = geselecteerd;
     const alle = aanmeldingenMap[les.id] || [];
@@ -166,13 +171,7 @@ export default function RicardoView() {
 
     return (
       <div className="page">
-        <div className="sc-header">
-          <div className="sc-logo">
-            <img className="sc-logo-img" src={LOGO} alt="Soul Community" onError={e => e.target.style.display='none'}/>
-            <div className="sc-logo-tekst"><div className="sc-logo-naam">Soul Community</div></div>
-          </div>
-          <div className="sc-admin-badge">Beheer</div>
-        </div>
+        <HeroHeader/>
         <button className="sc-back" onClick={() => setGeselecteerd(null)}>← Overzicht</button>
         <div style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '12px 20px 4px', position: 'relative', zIndex: 1 }}>
           <img src={RICARDO} alt="Ricardo" style={{ width: 56, height: 56, borderRadius: '50%', objectFit: 'cover', objectPosition: 'top', border: '2px solid var(--paars-rand)', flexShrink: 0 }}/>
@@ -244,24 +243,13 @@ export default function RicardoView() {
     );
   }
 
+  // Overzicht
   const groepen = groeperPerDatum(tab==='lessen' ? lessen : [], tab==='events' ? events : []);
   const datums = Object.keys(groepen).sort();
 
   return (
     <div className="page">
-      <div className="sc-header">
-        <div className="sc-logo">
-          <img className="sc-logo-img" src={LOGO} alt="Soul Community" onError={e => e.target.style.display='none'}/>
-          <div className="sc-logo-tekst">
-            <div className="sc-logo-naam">Soul Community</div>
-            <div className="sc-logo-sub">Be the best you can be</div>
-          </div>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <img src={RICARDO} alt="Ricardo" style={{ width: 36, height: 36, borderRadius: '50%', objectFit: 'cover', objectPosition: 'top', border: '1.5px solid var(--paars-rand)' }}/>
-          <div className="sc-admin-badge">Beheer</div>
-        </div>
-      </div>
+      <HeroHeader/>
 
       <div className="sc-bottom-nav">
         <button className={`sc-nav-btn${tab==='lessen'?' active':''}`} onClick={() => setTab('lessen')}>Lessen</button>
@@ -289,10 +277,8 @@ export default function RicardoView() {
                 const aantalR = alle.filter(a => a.status==='reservist').length;
                 const totaal = aantalL + aantalV || 1;
                 const onbalans = aantalL !== aantalV;
-
                 return (
-                  <button key={item.id} className={`sc-les-card${onbalans?' tekort':''}`} onClick={() => setGeselecteerd({ ...item, type: 'les' })}
-                    style={{ padding: '12px 16px' }}>
+                  <button key={item.id} className={`sc-les-card${onbalans?' tekort':''}`} onClick={() => setGeselecteerd({ ...item, type: 'les' })} style={{ padding: '12px 16px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
                       <div>
                         <div className="sc-les-tijd">{item.tijd}</div>
@@ -318,6 +304,7 @@ export default function RicardoView() {
               if (item.type === 'event') {
                 return (
                   <button key={item.id} className="sc-event-card" onClick={() => setGeselecteerd({ ...item, type: 'event' })}>
+                    {item.fotoUrl && <img src={item.fotoUrl} alt={item.naam} className="sc-event-foto"/>}
                     <div className="sc-event-body">
                       <div className="sc-event-tag">Event</div>
                       <div className="sc-event-naam">{item.naam}</div>
