@@ -10,15 +10,49 @@ const WHATSAPP_RICARDO = '31612345678'; // Ricardos nummer zonder + en zonder 0 
 
 // ── Entry point voor POST requests van de webapp ─────────────────────────
 
+function doGet(e) {
+  // Reservisten oproep
+  if (e.parameter.action === 'reservistenOproep') {
+    return handleReservistenOproep(e.parameter);
+  }
+  try {
+    const action = e.parameter.action;
+    if (!action) {
+      return ContentService
+        .createTextOutput(JSON.stringify({ ok: true, status: 'Soul Community API actief' }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
+    let result;
+    if (action === 'aanmelden') result = handleAanmelden(e.parameter);
+    else if (action === 'afmelden') result = handleAfmelden(e.parameter);
+    else result = { ok: false, error: 'Onbekende actie: ' + action };
+
+    return ContentService
+      .createTextOutput(JSON.stringify(result))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch (err) {
+    return ContentService
+      .createTextOutput(JSON.stringify({ ok: false, error: err.message }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
 function doPost(e) {
   try {
-    const payload = JSON.parse(e.postData.contents);
+    let payload;
+    try {
+      payload = JSON.parse(e.postData.contents);
+    } catch {
+      // Probeer parameters als fallback
+      payload = e.parameter;
+    }
     const { action } = payload;
 
     let result;
     if (action === 'aanmelden') result = handleAanmelden(payload);
     else if (action === 'afmelden') result = handleAfmelden(payload);
-    else result = { ok: false, error: 'Onbekende actie' };
+    else result = { ok: false, error: 'Onbekende actie: ' + action };
 
     return ContentService
       .createTextOutput(JSON.stringify(result))
@@ -143,6 +177,29 @@ function handleAfmelden({ lidId, lesId }) {
 
 // ── Geplande taak: 16:00 reminder ────────────────────────────────────────
 // Stel in via Apps Script > Triggers > dagelijks om 16:00
+
+function handleReservistenOproep({ lesId, lesNaam, datum, tijd }) {
+  const ss = SpreadsheetApp.openById(SHEET_ID);
+  const ledenSheet = ss.getSheetByName('Leden');
+  const leden = ledenSheet.getDataRange().getValues().slice(1)
+    .filter(r => r[4] === true || r[4] === 'TRUE')
+    .map(r => ({ naam: r[1], email: r[2], token: r[5] }));
+
+  const appUrl = 'https://soul-community.vercel.app/lid/';
+  leden.forEach(lid => {
+    GmailApp.sendEmail(
+      lid.email,
+      'Soul Community — Reservistenoproep: ' + lesNaam,
+      'Hoi ' + lid.naam.split(' ')[0] + ',\n\n' +
+      'Er is een tekort bij ' + lesNaam + ' op ' + datum + ' om ' + tijd + '.\n\n' +
+      'Kun jij invallen? Meld je aan via jouw link:\n' +
+      appUrl + lid.token + '\n\n' +
+      'Eerste die reageert krijgt de plek — gratis deelname!\n\n' +
+      'Soul Community'
+    );
+  });
+  return ContentService.createTextOutput(JSON.stringify({ ok: true })).setMimeType(ContentService.MimeType.JSON);
+}
 
 function stuurReminders() {
   const dag = new Date();

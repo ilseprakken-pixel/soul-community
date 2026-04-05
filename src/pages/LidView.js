@@ -88,14 +88,16 @@ function ProfielTab({ lid, mijnAanmeldingen, lessen }) {
         ))}
       </div>
 
-      <a href={`${WHATSAPP}?text=Hoi Ricardo!`} style={{ margin: '8px 16px 0', padding: '16px', background: 'var(--zwart3)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--wit08)', position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', textDecoration: 'none', gap: 16 }}>
-        <img src={RICARDO} alt="Ricardo" style={{ width: 90, height: 90, borderRadius: '50%', objectFit: 'cover', objectPosition: 'top', border: '2px solid var(--paars-rand)', flexShrink: 0 }}/>
-        <div>
-          <div style={{ fontSize: 11, color: 'var(--wit35)', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 6 }}>Contact</div>
-          <div style={{ fontSize: 16, color: 'var(--wit80)', fontWeight: 500, marginBottom: 4 }}>Ricardo</div>
-          <div style={{ fontSize: 13, color: 'var(--paars-licht)' }}>Stuur een WhatsApp bericht</div>
-        </div>
-      </a>
+      <div style={{ margin: '8px 16px 0', padding: '14px 16px', background: 'var(--zwart3)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--wit08)', position: 'relative', zIndex: 1 }}>
+        <div style={{ fontSize: 11, color: 'var(--wit35)', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 8 }}>Contact</div>
+        <a href={`${WHATSAPP}?text=Hoi Ricardo!`} style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
+          <img src={RICARDO} alt="Ricardo" className="sc-ricardo-avatar"/>
+          <div>
+            <div style={{ fontSize: 14, color: 'var(--wit80)', fontWeight: 500 }}>Ricardo</div>
+            <div style={{ fontSize: 12, color: 'var(--paars-licht)' }}>Stuur een WhatsApp bericht</div>
+          </div>
+        </a>
+      </div>
     </div>
   );
 }
@@ -205,7 +207,7 @@ export default function LidView() {
     const mijn = mijnAanmeldingen.find(a => a.lesId === les.id);
     const ingeschreven = !!mijn && mijn.status === 'bevestigd';
     const alsReservist = !!mijn && mijn.status === 'reservist';
-    const kanReservist = lid.isReservist && tekort && tekort !== lid.rol && !ingeschreven && gesloten;
+    const kanReservist = lid.isReservist && tekort && tekort !== lid.rol && !ingeschreven && !gesloten;
     const reservistVol = reservisten.filter(r => r.rol === tekort).length >= tekortAantal;
     const totaal = aantalL + aantalV || 1;
 
@@ -337,7 +339,7 @@ export default function LidView() {
         overflow: 'hidden',
         flexShrink: 0,
       }}>
-        <img src="/hero.png" alt="Soul Community" style={{
+        <img src="/hero.jpg" alt="Soul Community" style={{
           width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 20%',
           display: 'block',
         }}/>
@@ -351,7 +353,7 @@ export default function LidView() {
           display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <img src={LOGO} alt="Soul Community" style={{ width: 56, height: 56, objectFit: 'contain', filter: 'invert(1)' }} onError={e => e.target.style.display='none'}/>
+            <img src={LOGO} alt="Soul Community" style={{ width: 56, height: 56, objectFit: 'contain', filter: 'invert(1)' }}/>
             <div>
               <div style={{ fontFamily: 'var(--font-display)', fontSize: 28, letterSpacing: '0.08em', color: '#fff', lineHeight: 1 }}>Soul Community</div>
               <div style={{ fontSize: 9, color: 'var(--goud)', letterSpacing: '0.2em', textTransform: 'uppercase', marginTop: 3 }}>Be the best you can be</div>
