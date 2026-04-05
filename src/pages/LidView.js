@@ -207,7 +207,7 @@ export default function LidView() {
     const mijn = mijnAanmeldingen.find(a => a.lesId === les.id);
     const ingeschreven = !!mijn && mijn.status === 'bevestigd';
     const alsReservist = !!mijn && mijn.status === 'reservist';
-    const kanReservist = lid.isReservist && tekort && tekort !== lid.rol && !ingeschreven && !gesloten;
+    const kanReservist = lid.isReservist && tekort && tekort !== lid.rol && !ingeschreven && gesloten;
     const reservistVol = reservisten.filter(r => r.rol === tekort).length >= tekortAantal;
     const totaal = aantalL + aantalV || 1;
 
