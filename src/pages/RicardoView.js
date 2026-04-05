@@ -136,8 +136,13 @@ export default function RicardoView() {
           <div className="sc-admin-badge">Beheer</div>
         </div>
         <button className="sc-back" onClick={() => setGeselecteerd(null)}>← Overzicht</button>
-        <div className="sc-detail-naam">{les.naam}</div>
-        <div className="sc-detail-tijd">{formatDatum(les.datum)} · {les.tijd}</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '12px 20px 4px', position: 'relative', zIndex: 1 }}>
+          <img src={RICARDO} alt="Ricardo" style={{ width: 56, height: 56, borderRadius: '50%', objectFit: 'cover', objectPosition: 'top', border: '2px solid var(--paars-rand)', flexShrink: 0 }}/>
+          <div>
+            <div className="sc-detail-naam" style={{ padding: 0 }}>{les.naam}</div>
+            <div className="sc-detail-tijd" style={{ padding: 0 }}>{formatDatum(les.datum)} · {les.tijd}</div>
+          </div>
+        </div>
 
         {onbalans && (
           <div className="sc-banner sc-banner-warning">
@@ -153,7 +158,7 @@ export default function RicardoView() {
 
         {onbalans && (
           <div className="sc-btn-wrap">
-            <button className="sc-btn sc-btn-reservist" onClick={() => handleReservistenOproep(les)}>
+            <button className="sc-btn sc-btn-aanmeld" onClick={() => handleReservistenOproep(les)}>
               Stuur reservistenoproep
             </button>
           </div>
