@@ -205,10 +205,10 @@ export default function RicardoView() {
           <div style={{ fontSize: 11, color: 'var(--wit35)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>Handmatig aanmelden</div>
           <input className="sc-input" style={{ marginBottom: 8 }} placeholder="Naam lid" value={handmatigNaam} onChange={e => setHandmatigNaam(e.target.value)}/>
           <div style={{ display: 'flex', gap: 8, marginBottom: 10 }}>
-            <button onClick={() => setHandmatigRol('leider')} style={{ flex: 1, padding: '8px', borderRadius: 8, border: '1px solid var(--paars-rand)', background: handmatigRol==='leider' ? 'var(--paars)' : 'var(--zwart2)', color: 'var(--wit)', cursor: 'pointer', fontFamily: 'var(--font-body)' }}>Leider</button>
+            <button onClick={() => setHandmatigRol('leider')} style={{ flex: 1, padding: '8px', borderRadius: 8, border: '1px solid var(--paars-rand)', background: handmatigRol==='leider' ? 'var(--blauw)' : 'var(--zwart2)', color: 'var(--wit)', cursor: 'pointer', fontFamily: 'var(--font-body)' }}>Leider</button>
             <button onClick={() => setHandmatigRol('volger')} style={{ flex: 1, padding: '8px', borderRadius: 8, border: '1px solid var(--paars-rand)', background: handmatigRol==='volger' ? 'var(--paars)' : 'var(--zwart2)', color: 'var(--wit)', cursor: 'pointer', fontFamily: 'var(--font-body)' }}>Volger</button>
           </div>
-          <button className="sc-btn sc-btn-aanmeld" style={{ padding: '10px' }} onClick={() => handleHandmatigAanmelden(les)}>Aanmelden</button>
+          <button style={{ width: '100%', padding: '10px', borderRadius: 'var(--radius-sm)', background: 'var(--blauw)', color: '#fff', border: 'none', fontSize: 14, fontWeight: 500, fontFamily: 'var(--font-body)', cursor: 'pointer' }} onClick={() => handleHandmatigAanmelden(les)}>Aanmelden</button>
         </div>
 
         <div className="sc-sectie">Leiders ({aantalL})</div>
