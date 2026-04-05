@@ -194,7 +194,7 @@ function handleReservistenOproep({ lesId, lesNaam, datum, tijd }) {
       'Er is een tekort bij ' + lesNaam + ' op ' + datum + ' om ' + tijd + '.\n\n' +
       'Kun jij invallen? Meld je aan via jouw link:\n' +
       appUrl + lid.token + '\n\n' +
-      'Eerste die reageert krijgt de plek — je deelname wordt gewaardeerd!\n\n' +
+      'Eerste die reageert krijgt de plek — gratis deelname!\n\n' +
       'Soul Community'
     );
   });
